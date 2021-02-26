@@ -4,3 +4,4 @@
 
 /.vs
 /tl-renamer-cli/obj
+/tl-renamer-cli/bin/Release/netcoreapp3.1
