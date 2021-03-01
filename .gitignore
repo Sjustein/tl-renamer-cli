@@ -5,3 +5,6 @@
 /.vs
 /tl-renamer-cli/obj
 /tl-renamer-cli/bin/Release/netcoreapp3.1
+/bin/.vs/tl-renamer-cli/v16
+/bin
+/out/build/x64-Debug (default)
