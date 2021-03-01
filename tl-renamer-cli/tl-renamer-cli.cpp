@@ -2,6 +2,7 @@
 #include <string>
 #include <filesystem>
 #include <map>
+#include <stdio.h>
 
 namespace fs = std::filesystem;
 
@@ -14,17 +15,33 @@ char getPathSep() {
 }
 
 void processDirectory(std::string dir) {
-	std::map<std::string, unsigned long> files;
+	std::map<unsigned long, std::string> files;
 
 	// Gather the file creation time of files
 	for (const auto& file : fs::directory_iterator(dir)) {
 		if (!file.is_directory() && file.is_regular_file() && !file.is_symlink()) {
 			unsigned long millis = file.last_write_time().time_since_epoch() / std::chrono::milliseconds(1);
-			files.emplace(file.path().filename().string(), millis);
+			files.emplace(millis, file.path().filename().string());
 		}
 	}
 
-	// Order the directory
+	// The dictionary is already ordered, check if the converted directory exists
+	fs::directory_entry convertedPath(dir + "Converted");
+	if (convertedPath.exists())
+		std::filesystem::remove_all(convertedPath.path());
+
+	std::filesystem::create_directory(convertedPath.path());
+
+	int i = 0;
+	for (const auto& cur : files) {
+		fs::directory_entry curFile(dir + cur.second);
+		fs::directory_entry toPath(dir + "Converted" + getPathSep() + std::to_string(i) + curFile.path().extension().string());
+		std::filesystem::copy(curFile.path(), toPath.path());
+
+		std::cout << cur.second << " -> " << dir + "Converted" + getPathSep() + std::to_string(i) + curFile.path().extension().string() << std::endl;
+
+		i++;
+	}
 }
 
 int main(int argc, char *argv[])
