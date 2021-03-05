@@ -13,6 +13,7 @@ namespace fs = std::filesystem;
 #endif
 
 bool MoveFiles = false;
+std::string Filter = "*";
 
 void processDirectory(std::string dir)
 {
@@ -58,22 +59,51 @@ void printHelp()
 
 bool validateArgs(int argc, char* argv[])
 {
-	std::string validCommands[4] = { "-m", "--move", "-h", "--help" };
+	std::string validArgs[4] = { "-m", "--move", "-h", "--help" };
+	std::string argsWithArg[2] = { "-f", "--filter" };
 
 	if (argc < 3)
 		return true;
 
-	return std::find(std::begin(validCommands), std::end(validCommands), argv[2]) != std::end(validCommands);
+	for (int i = 2; i < argc; i++) {
+		// Check if this argument is valid, or if it has an extra argument if it requires that
+		std::string curArg = argv[i];
+		bool isArgument = std::find(std::begin(validArgs), std::end(validArgs), curArg) != std::end(validArgs);
+		bool isArgumentWithArg = std::find(std::begin(argsWithArg), std::end(argsWithArg), curArg) != std::end(argsWithArg);
+
+		std::cout << "isArgument: " << isArgument << std::endl;
+		std::cout << "isArgumentWithArg: " << isArgumentWithArg << std::endl;
+		std::cout << "Test: " << (argc > i) << std::endl;
+		std::cout << "argc: " << argc << " i: " << i << std::endl;
+
+		if (!isArgument && !(isArgumentWithArg && argc > i)) {
+			std::cout << "Invalid argument detected: " << curArg << std::endl << std::endl;
+			return false;
+		}
+
+		// If this is an argument with required argument, skip that argument
+		if (isArgumentWithArg)
+			i++;
+	}
+
+	return true;
 }
 
 bool processArguments(int argc, char* argv[])
 {
-	std::string arg = argv[2];
-	if (arg == "-m" || arg == "--move")
-		MoveFiles = true;
-	else if (arg == "-h" || arg == "--help") {
-		printHelp();
-		return true;
+	for (int i = 2; i < argc; i++) {
+		std::string arg = argv[i];
+		if (arg == "-m" || arg == "--move")
+			MoveFiles = true;
+		else if (arg == "-h" || arg == "--help") {
+			printHelp();
+			return true;
+		}
+		if (arg == "-f" || arg == "--filter") {
+			std::string nextVal = argv[i + 1];
+			Filter = argv[i+1];
+			i++;
+		}
 	}
 
 	return false;
@@ -83,9 +113,8 @@ int main(int argc, char *argv[])
 {
 	// Check if the arguments are valid
 	if (!validateArgs(argc, argv)) {
-		std::cout << "The specified command line arguments are not in the correct format." << std::endl << std::endl;
 		printHelp();
-		return 0;
+		return 1;
 	}
 
 	// Check if the directory has been specified in a cli argument
@@ -100,11 +129,13 @@ int main(int argc, char *argv[])
 	// Check if there are command line arguments to be checked
 	if (argc > 2)
 		if (processArguments(argc, argv))
-			return 0;
+			return 2;
 		
 	// Check if the last character is a path seperator. Otherwise, add it
 	if (dir.back() != PATH_SEP)
 		dir += PATH_SEP;
+
+	std::cout << Filter;
 
 	processDirectory(dir);
 	return 0;
