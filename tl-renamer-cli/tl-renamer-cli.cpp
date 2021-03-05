@@ -6,13 +6,11 @@
 
 namespace fs = std::filesystem;
 
-char getPathSep() {
 #ifdef _WIN32
-	return '\\';
+	#define PATH_SEP '\\'
 #else
-	return '/';
+	#define PATH_SEP '/'
 #endif
-}
 
 void processDirectory(std::string dir) {
 	std::map<unsigned long, std::string> files;
@@ -33,12 +31,14 @@ void processDirectory(std::string dir) {
 	std::filesystem::create_directory(convertedPath.path());
 
 	int i = 0;
+	std::string dirBase = dir + "Converted" + PATH_SEP;
 	for (const auto& cur : files) {
 		fs::directory_entry curFile(dir + cur.second);
-		fs::directory_entry toPath(dir + "Converted" + getPathSep() + std::to_string(i) + curFile.path().extension().string());
-		std::filesystem::copy(curFile.path(), toPath.path());
+		std::string curFile = dirBase + std::to_string(i) + curFile.path().extension().string();
+		fs::directory_entry toPath(curFile);
 
-		std::cout << cur.second << " -> " << dir + "Converted" + getPathSep() + std::to_string(i) + curFile.path().extension().string() << std::endl;
+		std::filesystem::copy(curFile.path(), toPath.path());
+		std::cout << cur.second << " -> " << curFile << std::endl;
 
 		i++;
 	}
@@ -46,9 +46,6 @@ void processDirectory(std::string dir) {
 
 int main(int argc, char *argv[])
 {
-	// Find the path seperator for the current operating system
-	char pathSep = getPathSep();
-
 	// Check if the directory has been specified in a cli argument
 	std::string dir;
 	if (argc > 1)
@@ -57,10 +54,10 @@ int main(int argc, char *argv[])
 		std::cout << "Please input the path to the directory with the files to be renamed] ";
 		std::getline(std::cin, dir, '\n');
 	}
-
+		
 	// Check if the last character is a path seperator. Otherwise, add it
-	if (dir.back() != pathSep)
-		dir += pathSep;
+	if (dir.back() != PATH_SEP)
+		dir += PATH_SEP;
 
 	processDirectory(dir);
 	return 0;
