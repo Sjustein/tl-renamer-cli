@@ -12,6 +12,8 @@ namespace fs = std::filesystem;
 	#define PATH_SEP '/'
 #endif
 
+bool MoveFiles = false;
+
 void processDirectory(std::string dir)
 {
 	std::map<unsigned long, std::string> files;
@@ -39,24 +41,42 @@ void processDirectory(std::string dir)
 		fs::directory_entry toPath(curFilePath);
 
 		std::filesystem::copy(curFile.path(), toPath.path());
+		if (MoveFiles)
+			std::filesystem::remove(curFile.path());
+
 		std::cout << cur.second << " -> " << curFilePath << std::endl;
 
 		i++;
 	}
 }
 
+void printHelp()
+{
+	std::cout << "USAGE: tl-renamer-cli path_to_proces [arguments]" << std::endl << std::endl
+		<< "-m " << std::setw(75) << "Move the files to the processed directory, instead of copying them" << std::endl;
+}
+
 bool validateArgs(int argc, char* argv[])
 {
-	return false;
+	std::string validCommands[4] = { "-m", "--move", "-h", "--help" };
+
 	if (argc < 3)
 		return true;
 
-	return argv[2] != "-m";
+	return std::find(std::begin(validCommands), std::end(validCommands), argv[2]) != std::end(validCommands);
 }
 
-void printHelp() {
-	std::cout << "USAGE: tl-renamer-cli path_to_proces [arguments]" << std::endl <<std::endl
-				<< "-m " << std::setw(75) << "Move the files to the processed directory, instead of copying them" << std::endl;
+bool processArguments(int argc, char* argv[])
+{
+	std::string arg = argv[2];
+	if (arg == "-m" || arg == "--move")
+		MoveFiles = true;
+	else if (arg == "-h" || arg == "--help") {
+		printHelp();
+		return true;
+	}
+
+	return false;
 }
 
 int main(int argc, char *argv[])
@@ -65,6 +85,7 @@ int main(int argc, char *argv[])
 	if (!validateArgs(argc, argv)) {
 		std::cout << "The specified command line arguments are not in the correct format." << std::endl << std::endl;
 		printHelp();
+		return 0;
 	}
 
 	// Check if the directory has been specified in a cli argument
@@ -75,6 +96,11 @@ int main(int argc, char *argv[])
 		std::cout << "Please input the path to the directory with the files to be renamed] ";
 		std::getline(std::cin, dir, '\n');
 	}
+
+	// Check if there are command line arguments to be checked
+	if (argc > 2)
+		if (processArguments(argc, argv))
+			return 0;
 		
 	// Check if the last character is a path seperator. Otherwise, add it
 	if (dir.back() != PATH_SEP)
