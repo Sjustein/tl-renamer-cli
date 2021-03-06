@@ -96,7 +96,7 @@ bool validateArgs(int argc, char* argv[])
 
 bool processArguments(int argc, char* argv[])
 {
-	for (int i = 2; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		std::string arg = argv[i];
 		if (arg == "-m" || arg == "--move")
 			MoveFiles = true;
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Check if there are command line arguments to be checked
-	if (argc > 2)
+	if (argc > 1)
 		if (processArguments(argc, argv))
 			return 2;
 		
