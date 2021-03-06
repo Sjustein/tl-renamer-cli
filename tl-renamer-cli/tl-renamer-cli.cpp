@@ -67,31 +67,32 @@ void printHelp()
 	std::cout << "Specify a filter for the file extension to move" << std::endl;
 }
 
-bool validateArgs(int argc, char* argv[])
+std::pair<bool, bool> validateArgs(int argc, char* argv[])
 {
 	std::string validArgs[4] = { "-m", "--move", "-h", "--help" };
 	std::string argsWithArg[2] = { "-f", "--filter" };
+	bool firstIndexIsArg = false;
 
-	if (argc < 3)
-		return true;
-
-	for (int i = 2; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		// Check if this argument is valid, or if it has an extra argument if it requires that
 		std::string curArg = argv[i];
 		bool isArgument = std::find(std::begin(validArgs), std::end(validArgs), curArg) != std::end(validArgs);
 		bool isArgumentWithArg = std::find(std::begin(argsWithArg), std::end(argsWithArg), curArg) != std::end(argsWithArg);
 
-		if (!isArgument && !(isArgumentWithArg && argc > i)) {
+		if ((!isArgument && !(isArgumentWithArg && argc > i)) && i != 1) {
 			std::cout << "Invalid argument detected: " << curArg << std::endl << std::endl;
-			return false;
+			return std::make_pair(false, firstIndexIsArg);
 		}
+
+		if (i == 1 && (isArgument || (isArgumentWithArg && argc > i)))
+			firstIndexIsArg = true;
 
 		// If this is an argument with required argument, skip that argument
 		if (isArgumentWithArg)
 			i++;
 	}
 
-	return true;
+	return std::make_pair(true, firstIndexIsArg);
 }
 
 bool processArguments(int argc, char* argv[])
@@ -117,14 +118,15 @@ bool processArguments(int argc, char* argv[])
 int main(int argc, char *argv[])
 {
 	// Check if the arguments are valid
-	if (!validateArgs(argc, argv)) {
+	std::pair<bool, bool> argValidation = validateArgs(argc, argv);
+	if (!argValidation.first) {
 		printHelp();
 		return 1;
 	}
 
 	// Check if the directory has been specified in a cli argument
 	std::string dir;
-	if (argc > 1)
+	if (argc > 1 && !argValidation.second)
 		dir = argv[1];
 	else {
 		std::cout << "Please input the path to the directory with the files to be renamed] ";
