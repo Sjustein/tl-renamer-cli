@@ -53,8 +53,13 @@ void processDirectory(std::string dir)
 
 void printHelp()
 {
-	std::cout << "USAGE: tl-renamer-cli path_to_proces [arguments]" << std::endl << std::endl
-		<< "-m " << std::setw(75) << "Move the files to the processed directory, instead of copying them" << std::endl;
+	std::cout << "USAGE: tl-renamer-cli path_to_proces [arguments]" << std::endl << std::endl;
+	std::printf("%-20s", "-m (--move)");
+	std::cout << "Move the files to the processed directory, instead of copying them" << std::endl;
+	std::printf("%-20s", "-h (--help)");
+	std::cout << "Prints this overview" << std::endl;
+	std::printf("%-20s", "-f (--filter)");
+	std::cout << "Specify a filter for the file extension to move" << std::endl;
 }
 
 bool validateArgs(int argc, char* argv[])
@@ -70,11 +75,6 @@ bool validateArgs(int argc, char* argv[])
 		std::string curArg = argv[i];
 		bool isArgument = std::find(std::begin(validArgs), std::end(validArgs), curArg) != std::end(validArgs);
 		bool isArgumentWithArg = std::find(std::begin(argsWithArg), std::end(argsWithArg), curArg) != std::end(argsWithArg);
-
-		std::cout << "isArgument: " << isArgument << std::endl;
-		std::cout << "isArgumentWithArg: " << isArgumentWithArg << std::endl;
-		std::cout << "Test: " << (argc > i) << std::endl;
-		std::cout << "argc: " << argc << " i: " << i << std::endl;
 
 		if (!isArgument && !(isArgumentWithArg && argc > i)) {
 			std::cout << "Invalid argument detected: " << curArg << std::endl << std::endl;
