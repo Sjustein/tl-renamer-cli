@@ -38,17 +38,22 @@ void processDirectory(std::string dir)
 	std::string dirBase = dir + "Processed" + PATH_SEP;
 	for (const auto& cur : files) {
 		fs::directory_entry curFile(dir + cur.second);
-		std::string curFilePath = dirBase + std::to_string(i) + curFile.path().extension().string();
-		fs::directory_entry toPath(curFilePath);
 
-		std::filesystem::copy(curFile.path(), toPath.path());
-		if (MoveFiles)
-			std::filesystem::remove(curFile.path());
+		if (curFile.path().extension().string() == Filter) {
+			std::string curFilePath = dirBase + std::to_string(i) + curFile.path().extension().string();
+			fs::directory_entry toPath(curFilePath);
 
-		std::cout << cur.second << " -> " << curFilePath << std::endl;
+			std::filesystem::copy(curFile.path(), toPath.path());
+			if (MoveFiles)
+				std::filesystem::remove(curFile.path());
 
-		i++;
+			std::cout << cur.second << " -> " << curFilePath << std::endl;
+
+			i++;
+		}
 	}
+
+	std::cout << "Finished processing the directory.";
 }
 
 void printHelp()
@@ -134,8 +139,6 @@ int main(int argc, char *argv[])
 	// Check if the last character is a path seperator. Otherwise, add it
 	if (dir.back() != PATH_SEP)
 		dir += PATH_SEP;
-
-	std::cout << Filter;
 
 	processDirectory(dir);
 	return 0;
