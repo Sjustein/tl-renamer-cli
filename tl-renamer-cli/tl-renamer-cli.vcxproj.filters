@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\justi\source\repos\tl-renamer-cli\tl-renamer-cli\tl-renamer-cli.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\justi\source\repos\tl-renamer-cli\tl-renamer-cli\tl-renamer-cli.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\justi\source\repos\tl-renamer-cli\tl-renamer-cli\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{A9768D58-6362-3EDC-BC63-74680E416C23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2B40932F-E9C8-32FE-AF71-5E571E1C2627}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

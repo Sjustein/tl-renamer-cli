@@ -8,3 +8,5 @@
 /bin/.vs/tl-renamer-cli/v16
 /bin
 /out/build/x64-Debug (default)
+/tl-renamer-cli/CMakeFiles
+/tl-renamer-cli/cmake_install.cmake
