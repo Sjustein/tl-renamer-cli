@@ -135,6 +135,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	// Check if there are command line arguments to be checked
+	if (argc > 1)
+		if (processArguments(argc, argv))
+			return 2;
+
 	// Check if the directory has been specified in a cli argument
 	std::string dir;
 	if (argc > 1 && !argValidation.second)
@@ -143,11 +148,6 @@ int main(int argc, char *argv[])
 		std::cout << "Please input the path to the directory with the files to be renamed] ";
 		std::getline(std::cin, dir, '\n');
 	}
-
-	// Check if there are command line arguments to be checked
-	if (argc > 1)
-		if (processArguments(argc, argv))
-			return 2;
 		
 	// Check if the last character is a path seperator. Otherwise, add it
 	if (dir.back() != PATH_SEP)
