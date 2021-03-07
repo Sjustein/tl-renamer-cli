@@ -21,7 +21,7 @@ void processDirectory(std::string dir)
 
 	// Check if this is a directory and it exiists
 	if (!check.exists() || !check.is_directory()) {
-		std::cout << "The specified path does not exist or is not a directory.";
+		std::cout << "The specified path does not exist or is not a directory." << std::endl;
 		return;
 	}
 
@@ -60,7 +60,7 @@ void processDirectory(std::string dir)
 			i++;
 		}
 		else
-			std::cout << "Skipping file " << curFile.path().string() << " because of extension filter: " << ExtFilter;
+			std::cout << "Skipping file " << curFile.path().string() << " because of extension filter: " << ExtFilter << std::endl;
 	}
 
 	std::cout << "Finished processing the directory.";
