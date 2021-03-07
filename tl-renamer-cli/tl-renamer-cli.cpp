@@ -3,6 +3,10 @@
 #include <filesystem>
 #include <map>
 #include <stdio.h>
+#ifdef _WIN32
+#else
+	#include <ifstream>
+#endif
 
 namespace fs = std::filesystem;
 
