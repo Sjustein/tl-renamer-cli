@@ -13,10 +13,18 @@ namespace fs = std::filesystem;
 #endif
 
 bool MoveFiles = false;
-std::string Filter = "*";
+std::string ExtFilter = "*";
 
 void processDirectory(std::string dir)
 {
+	fs::directory_entry check(dir);
+
+	// Check if this is a directory and it exiists
+	if (!check.exists() || !check.is_directory()) {
+		std::cout << "The specified path does not exist or is not a directory.";
+		return;
+	}
+
 	std::map<unsigned long, std::string> files;
 
 	// Gather the file creation time of files
@@ -39,7 +47,7 @@ void processDirectory(std::string dir)
 	for (const auto& cur : files) {
 		fs::directory_entry curFile(dir + cur.second);
 
-		if (curFile.path().extension().string() == Filter) {
+		if (curFile.path().extension().string() == ExtFilter) {
 			std::string curFilePath = dirBase + std::to_string(i) + curFile.path().extension().string();
 			fs::directory_entry toPath(curFilePath);
 
@@ -51,6 +59,8 @@ void processDirectory(std::string dir)
 
 			i++;
 		}
+		else
+			std::cout << "Skipping file " << curFile.path().string() << " because of extension filter: " << ExtFilter;
 	}
 
 	std::cout << "Finished processing the directory.";
@@ -107,7 +117,7 @@ bool processArguments(int argc, char* argv[])
 		}
 		if (arg == "-f" || arg == "--filter") {
 			std::string nextVal = argv[i + 1];
-			Filter = argv[i+1];
+			ExtFilter = argv[i+1];
 			i++;
 		}
 	}
